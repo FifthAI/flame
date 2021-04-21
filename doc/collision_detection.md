@@ -1,8 +1,8 @@
 # Collision detection
 If you want to have a full blown physics engine in your game we recommend that you use
 Forge2D by adding [flame_forge2d](https://github.com/flame-engine/flame_forge2d) as a dependency.
-But if you have a simpler usecase and just want to check for collisions of components and improve
-the accuraccy of gestures, Flame's built-in collision detection will serve you very well.
+But if you have a simpler use-case and just want to check for collisions of components and improve
+the accuracy of gestures, Flame's built-in collision detection will serve you very well.
 
 If you have the following needs you should at least consider to use
 [Forge2D](https://github.com/flame-engine/forge2d):
@@ -24,6 +24,11 @@ form the area which can be used to either detect collisions or whether it contai
 the latter is very useful for accurate gesture detection. The collision detection does not handle
 what should happen when two hitboxes collide, so it is up to the user to implement what will happen
 when for example two position components have intersecting hitboxes.
+
+Do note that the built-in collision detection system does not take collisions between two hitboxes
+that overshoot each other into account, this could happen when they either move too fast or `update`
+being called with a large delta time (for example if your app is not in the foreground). This
+behaviour is called tunneling, if you want to read more about it.
 
 ## Mixins
 ### Hitbox
@@ -100,14 +105,14 @@ you can set your collidable to too if you need to optimize the collision detecti
 
 The `CollidableType` enum contains the following values:
 
- - `active` collides with other `Collidable`s of type active or static
- - `static` collides with other `Collidable`s of type active
+ - `active` collides with other `Collidable`s of type active or passive
+ - `passive` collides with other `Collidable`s of type active
  - `inactive` will not collide with any other `Collidable`s
 
 So if you have collidables that you don't need to check collisions against each other you can mark
-them as static by setting `collidableType = CollidableType.static`, this could for example be ground
-components or maybe your enemies don't need to check collisions between each other, then they could
-be marked as static too.
+them as passive by setting `collidableType = CollidableType.passive`, this could for example be
+ground components or maybe your enemies don't need to check collisions between each other, then they
+could be marked as passive too.
 
 Then we have the `inactive` type which simply doesn't get checked at all in the collision detection.
 This could be used for example if you have components outside of the screen that you don't care
@@ -236,4 +241,4 @@ you can use the optional arguments `radius` and `position` to set those, if the 
 `size` of the `Circle` will be automatically set too.
 
 ## Example
-https://github.com/flame-engine/flame/tree/master/doc/examples/collidables
+https://github.com/flame-engine/flame/tree/main/examples/lib/stories/collidables

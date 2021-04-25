@@ -21,8 +21,7 @@ import 'mixins/has_game_ref.dart';
 abstract class BaseComponent extends Component {
   final EffectsHandler _effectsHandler = EffectsHandler();
 
-  final OrderedSet<Component> _children =
-      OrderedSet(Comparing.on((c) => c.priority));
+  final OrderedSet<Component> _children = OrderedSet(Comparing.on((c) => c.priority));
 
   /// If the component has a parent it will be set here
   BaseComponent? _parent;

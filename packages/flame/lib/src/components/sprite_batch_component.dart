@@ -3,6 +3,8 @@ import 'dart:ui';
 import '../sprite_batch.dart';
 import 'component.dart';
 
+/// [SpriteBatch] 组成的组件,
+/// - 默认构造方法可以后设置[SpriteBatch]对象;
 class SpriteBatchComponent extends Component {
   SpriteBatch? spriteBatch;
   BlendMode? blendMode;

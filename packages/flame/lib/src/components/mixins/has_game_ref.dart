@@ -1,5 +1,6 @@
 import '../../../components.dart';
 import '../../game/game.dart';
+import 'package:flutter/foundation.dart';
 
 mixin HasGameRef<T extends Game> {
   T? _gameRef;
@@ -7,7 +8,9 @@ mixin HasGameRef<T extends Game> {
   T get gameRef {
     final ref = _gameRef;
     if (ref == null) {
-      throw 'Accessing gameRef before the component was added to the game!';
+      // print(StackTrace.current);
+      debugPrintStack(maxFrames: 3);
+      throw '${this} 在添加组件前使用了还没有绑定的gameRef / Accessing gameRef before the component was added to the game!';
     }
     return ref;
   }

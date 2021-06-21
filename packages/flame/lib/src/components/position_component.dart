@@ -53,6 +53,8 @@ abstract class PositionComponent extends BaseComponent {
   Vector2 get absolutePosition => absoluteParentPosition + position;
 
   /// Get the relative top left position regardless of the anchor and angle
+  ///
+  /// 获取相对左上角的位置，而不考虑锚点和角度
   Vector2 get topLeftPosition {
     return anchor.toOtherAnchorPosition(
       position,
@@ -70,7 +72,7 @@ abstract class PositionComponent extends BaseComponent {
   Vector2 get absoluteTopLeftPosition {
     final p = parent;
     if (p is PositionComponent) {
-      return p.absoluteTopLeftPosition + topLeftPosition;
+      return p.absoluteTopLeftPosition + topLeftPosition; // 就是递归本方法，每次都得到父组件的左上pos
     } else {
       return topLeftPosition;
     }
@@ -115,10 +117,14 @@ abstract class PositionComponent extends BaseComponent {
 
   /// Returns the relative position/size of this component.
   /// Relative because it might be translated by their parents (which is not considered here).
+  ///
+  /// 根据 父组件 相对位置 生成 rect
   Rect toRect() => topLeftPosition.toPositionedRect(size);
 
   /// Returns the absolute position/size of this component.
   /// Absolute because it takes any possible parent position into consideration.
+  ///
+  /// 根据 左上角 绝对位置 生成 rect
   Rect toAbsoluteRect() => absoluteTopLeftPosition.toPositionedRect(size);
 
   /// Mutates position and size using the provided [rect] as basis.

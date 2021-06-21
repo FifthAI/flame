@@ -14,6 +14,8 @@ abstract class Component {
   /// Whether this component is HUD object or not.
   ///
   /// HUD objects ignore the BaseGame.camera when rendered (so their position coordinates are considered relative to the device screen).
+  ///
+  /// heads-up display / 平视显示器 (就是俯视视角,光源,摄像机需要为真,垂直视角)
   bool isHud = false;
 
   bool _isMounted = false;
@@ -27,6 +29,8 @@ abstract class Component {
   /// The smaller the priority, the sooner your component will be updated/rendered.
   /// It can be any integer (negative, zero, or positive).
   /// If two components share the same priority, they will probably be drawn in the order they were added.
+  ///
+  /// 处理组件的优先级，算法是flame修改伸展树set，优先级会提升组件在树中的节点，查询速度快
   final int priority;
 
   /// Whether this component should be removed or not.

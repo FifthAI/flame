@@ -6,7 +6,7 @@ This tutorial will introduce you to:
  - `SpriteAnimation`: SpriteAnimations are animations composed from sprites, where each sprite represents a frame.
  - Gesture input: the most basic input for your game, the tap detector.
 
-All the code of this tutorial code can be found [here](./code) and is based on the Flame `1.0.0-rc9` version.
+All the code of this tutorial code can be found [here](./code).
 
 By the end of this tutorial, you will have built a simple game which renders a button that, when pressed, makes a small vampire robot run. It will look like this:
 
@@ -43,7 +43,7 @@ void main() {
   runApp(GameWidget(game: myGame));
 }
 
-class MyGame extends Game with TapDetector {
+class MyGame extends Game {
 
   @override
   void update(double dt) {

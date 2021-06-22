@@ -98,6 +98,18 @@ void main() {
       expect(child.tapped, true);
     });
 
+    test('add multiple children with addChildren', () {
+      final game = MyGame();
+      final children = List.generate(10, (_) => MyTap());
+      final wrapper = MyComposed();
+      wrapper.addChildren(children);
+
+      game.onResize(size);
+      game.add(wrapper);
+      game.update(0.0);
+      expect(wrapper.children.length, children.length);
+    });
+
     test('tap on offset children', () {
       final game = MyGame();
       final child = MyTap()
@@ -137,6 +149,22 @@ void main() {
 
       expect(child.rendered, true);
       expect(child.updated, true);
+    });
+
+    test('initially same debugMode as parent', () {
+      final game = MyGame();
+      game.onResize(Vector2.all(100));
+      final child = MyTap();
+      final wrapper = MyComposed();
+      wrapper.debugMode = true;
+
+      wrapper.addChild(child);
+      game.add(wrapper);
+      game.update(0.0);
+
+      expect(child.debugMode, true);
+      wrapper.debugMode = false;
+      expect(child.debugMode, true);
     });
   });
 }

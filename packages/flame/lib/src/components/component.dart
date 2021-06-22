@@ -23,6 +23,11 @@ abstract class Component {
   /// Whether this component is currently mounted on a game or not
   bool get isMounted => _isMounted;
 
+  /// If the component has a parent it will be set here
+  Component? _parent;
+
+  Component? get parent => _parent;
+
   /// Render priority of this component. This allows you to control the order in which your components are rendered.
   ///
   /// Components are always updated and rendered in the order defined by what this number is when the component is added to the game.
@@ -31,14 +36,15 @@ abstract class Component {
   /// If two components share the same priority, they will probably be drawn in the order they were added.
   ///
   /// 处理组件的优先级，算法是flame修改伸展树set，优先级会提升组件在树中的节点，查询速度快
-  final int priority;
+  int get priority => _priority;
+  int _priority;
 
   /// Whether this component should be removed or not.
   ///
   /// It will be checked once per component per tick, and if it is true, BaseGame will remove it.
   bool shouldRemove = false;
 
-  Component({this.priority = 0});
+  Component({int priority = 0}) : _priority = priority;
 
   /// This method is called periodically by the game engine to request that your component updates itself.
   ///
@@ -92,4 +98,9 @@ abstract class Component {
   /// }
   /// ```
   Future<void>? onLoad() => null;
+
+  /// Usually this is not something that the user would want to call since the
+  /// component list isn't re-ordered when it is called.
+  /// See BaseGame.changePriority instead.
+  void changePriorityWithoutResorting(int priority) => _priority = priority;
 }

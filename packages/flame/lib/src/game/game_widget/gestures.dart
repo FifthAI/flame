@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../../components.dart';
 import '../../../extensions.dart';
 import '../../components/mixins/draggable.dart';
 import '../../components/mixins/tapable.dart';
@@ -27,7 +28,9 @@ bool hasAdvancedGesturesDetectors(Game game) =>
     game is HasDraggableComponents;
 
 bool hasMouseDetectors(Game game) =>
-    game is MouseMovementDetector || game is ScrollDetector;
+    game is MouseMovementDetector ||
+    game is ScrollDetector ||
+    game is HasHoverableComponents;
 
 Widget applyBasicGesturesDetectors(Game game, Widget child) {
   return GestureDetector(
@@ -192,14 +195,28 @@ Widget applyAdvancedGesturesDetectors(Game game, Widget child) {
     );
   }
 
-  void addDragRecognizer(Drag Function(int, Vector2) config) {
+  void addDragRecognizer(Game game, Drag Function(int, DragStartInfo) config) {
     addAndConfigureRecognizer(
       () => ImmediateMultiDragGestureRecognizer(),
       (ImmediateMultiDragGestureRecognizer instance) {
         instance.onStart = (Offset o) {
           final pointerId = lastGeneratedDragId++;
-          final position = game.convertGlobalToLocalCoordinate(o.toVector2());
-          return config(pointerId, position);
+
+          final global = o;
+          final local = game
+              .convertGlobalToLocalCoordinate(
+                global.toVector2(),
+              )
+              .toOffset();
+
+          final details = DragStartDetails(
+            localPosition: local,
+            globalPosition: global,
+          );
+          return config(
+            pointerId,
+            DragStartInfo.fromDetails(game, details),
+          );
         };
       },
     );
@@ -228,15 +245,15 @@ Widget applyAdvancedGesturesDetectors(Game game, Widget child) {
   }
 
   if (game is MultiTouchDragDetector) {
-    addDragRecognizer((int pointerId, Vector2 position) {
-      game.onDragStart(pointerId, position);
+    addDragRecognizer(game, (int pointerId, DragStartInfo info) {
+      game.onDragStart(pointerId, info);
       return _DragEvent(game)
         ..onUpdate = ((details) => game.onDragUpdate(pointerId, details))
         ..onEnd = ((details) => game.onDragEnd(pointerId, details))
         ..onCancel = (() => game.onDragCancel(pointerId));
     });
   } else if (game is HasDraggableComponents) {
-    addDragRecognizer((int pointerId, Vector2 position) {
+    addDragRecognizer(game, (int pointerId, DragStartInfo position) {
       game.onDragStart(pointerId, position);
       return _DragEvent(game)
         ..onUpdate = ((details) => game.onDragUpdate(pointerId, details))
@@ -253,12 +270,13 @@ Widget applyAdvancedGesturesDetectors(Game game, Widget child) {
 }
 
 Widget applyMouseDetectors(Game game, Widget child) {
+  final mouseMoveFn = game is MouseMovementDetector
+      ? game.onMouseMove
+      : (game is HasHoverableComponents ? game.onMouseMove : null);
   return Listener(
     child: MouseRegion(
       child: child,
-      onHover: game is MouseMovementDetector
-          ? (e) => game.onMouseMove(PointerHoverInfo.fromDetails(game, e))
-          : null,
+      onHover: (e) => mouseMoveFn?.call(PointerHoverInfo.fromDetails(game, e)),
     ),
     onPointerSignal: (event) =>
         game is ScrollDetector && event is PointerScrollEvent

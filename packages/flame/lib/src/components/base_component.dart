@@ -6,6 +6,7 @@ import 'package:ordered_set/comparing.dart';
 import 'package:ordered_set/ordered_set.dart';
 
 import '../../game.dart';
+import '../../gestures.dart';
 import '../effects/effects.dart';
 import '../effects/effects_handler.dart';
 import '../extensions/vector2.dart';
@@ -57,7 +58,7 @@ abstract class BaseComponent extends Component {
         ),
       );
 
-  BaseComponent({int priority = 0}) : super(priority: priority);
+  BaseComponent({int? priority}) : super(priority: priority);
 
   /// This method is called periodically by the game engine to request that your component updates itself.
   ///
@@ -153,6 +154,11 @@ abstract class BaseComponent extends Component {
     if (this is HasGameRef) {
       final c = this as HasGameRef;
       gameRef ??= c.hasGameRef ? c.gameRef : null;
+    } else if (gameRef == null) {
+      assert(
+        !isMounted,
+        'Parent was already added to Game and has no HasGameRef; in this case, gameRef is mandatory.',
+      );
     }
     if (gameRef is BaseGame) {
       gameRef.prepare(child);
@@ -223,5 +229,10 @@ abstract class BaseComponent extends Component {
       }
     }
     return shouldContinue;
+  }
+
+  @protected
+  Vector2 eventPosition(PositionInfo info) {
+    return isHud ? info.eventPosition.widget : info.eventPosition.game;
   }
 }

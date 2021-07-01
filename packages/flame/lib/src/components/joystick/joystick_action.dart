@@ -17,6 +17,9 @@ import 'joystick_events.dart';
 enum JoystickActionAlign { topLeft, bottomLeft, topRight, bottomRight }
 
 class JoystickAction extends BaseComponent with Draggable, HasGameRef {
+  @override
+  bool isHud = true;
+
   final int actionId;
   final double size;
   final double _sizeBackgroundDirection;
@@ -186,9 +189,9 @@ class JoystickAction extends BaseComponent with Draggable, HasGameRef {
   }
 
   @override
-  bool onDragUpdate(int pointerId, DragUpdateInfo event) {
+  bool onDragUpdate(int pointerId, DragUpdateInfo info) {
     if (_dragging) {
-      _dragPosition = event.eventPosition.game;
+      _dragPosition = info.eventPosition.game;
       return true;
     }
     return false;
